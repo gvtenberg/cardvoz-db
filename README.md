@@ -4,6 +4,8 @@ Esquema e dados iniciais do banco PostgreSQL do CardVoz, versionados como migrat
 
 Este repositório é a **fonte da verdade do banco**: a [`cardvoz-api`](../cardvoz-api) só se conecta e não cria tabelas. Toda mudança de esquema entra aqui como uma nova migration.
 
+O CardVoz é um app de fichas de estudo para pessoas cegas e com baixa visão, com quatro repositórios: o site (`cardvoz`), a API (`cardvoz-api`), este banco e o painel da equipe (`cardvoz-admin`). Regras do banco e combinados da equipe, para pessoas e para ferramentas de IA: [`AGENTS.md`](AGENTS.md).
+
 ## Estrutura
 
 ```
@@ -89,3 +91,9 @@ As tabelas precisam continuar batendo com o modelo do Entity Framework da `cardv
 dotnet tool install --global dotnet-ef
 ConnectionStrings__DefaultConnection="Host=localhost" dotnet ef dbcontext script
 ```
+
+## Para quem continua o projeto
+
+- Leia o [`AGENTS.md`](AGENTS.md) antes de criar uma migration: regras (não apagar dados, tabela nova com RLS, nomes iguais aos do Entity Framework) e combinados da equipe. O `CLAUDE.md` só aponta para ele.
+- **Ordem de publicação** de uma mudança que mexe em tabela: migration aqui (`npx supabase db push`) → API → site.
+- **Pendente:** aplicar `20261030000000_idioma_das_fichas.sql` no Supabase depois do merge. A API ainda não lê as colunas novas (tarefa em `cardvoz-api/docs/tarefas/idioma-das-fichas.md`).
