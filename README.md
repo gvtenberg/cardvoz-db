@@ -19,7 +19,8 @@ supabase/
 │   ├── 20261030000000_idioma_das_fichas.sql     # Idioma das perguntas e das respostas (não apaga dados)
 │   ├── 20261111000000_estatisticas_das_fichas.sql  # Acertos e erros de cada ficha (não apaga dados)
 │   ├── 20261112000000_revisao_espacada.sql      # Revisão espaçada: nível e próxima revisão (não apaga dados)
-│   └── 20261112000100_redefinir_senha.sql       # Códigos de "Esqueci minha senha" (tabela nova)
+│   ├── 20261112000100_redefinir_senha.sql       # Códigos de "Esqueci minha senha" (tabela nova)
+│   └── 20261113000000_confirmar_email.sql       # Confirmação de e-mail (coluna e tabela novas)
 └── seed.sql                                     # Vazio: os baralhos são privados de cada usuário
 ```
 
@@ -30,6 +31,7 @@ supabase/
 | `"Users"` | Contas (nome, e-mail único em minúsculas, ID da conta Google, hash da senha — nulo em quem entra só pelo Google —, bloqueio por tentativas, se é admin do painel) |
 | `"RefreshTokens"` | Sessões de login (só o hash SHA-256 do token, validade, revogação) |
 | `"PasswordResetTokens"` | Códigos de "Esqueci minha senha": só o hash, uso único, válidos por 1 hora |
+| `"EmailConfirmationTokens"` | Códigos do link de confirmação de e-mail: só o hash, uso único, válidos por 24 horas. `"Users"."EmailConfirmedAt"` guarda quando o e-mail foi confirmado |
 | `"Decks"` | Baralhos de cada usuário (título, categoria, descrição, slug único por usuário). Sem dono (`"UserId"` nulo) = baralho compartilhado, criado pelo painel; `"SourceDeckId"` aponta de qual compartilhado uma cópia veio; `"QuestionLanguage"`/`"AnswerLanguage"` guardam o idioma das fichas (nulo = português); `"LastStudiedAt"` = quando o último estudo chegou à conta |
 | `"Cards"` | Fichas de cada baralho (pergunta, resposta, ordem). `"CorrectCount"`/`"IncorrectCount"` somam os acertos e erros; `"LastAnsweredAt"`/`"LastWasCorrect"` guardam a resposta mais recente, que decide o "Estudar só as que errei" do site. `"ReviewLevel"` (0 a 6) e `"NextReviewAt"` são a revisão espaçada: quando a ficha volta para "Revisar agora" |
 | `"StudySessions"` | Sessões de estudo (acertos, erros, início e fim) |
