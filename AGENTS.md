@@ -50,4 +50,6 @@ Estas regras vieram de conversas da equipe com assistentes de IA e valem para to
 - **Quem usa o CardVoz:** a cliente é cega e estuda com o TalkBack; o público inclui pessoas com baixa visão. O banco guarda o que permite isso (ex.: o idioma das fichas, para o leitor de tela trocar a voz).
 - **Trabalho dividido:** cada repositório tem dono no grupo (`upstream` é o repositório do `fiuzaheitor`). Mudança de esquema só depois de combinar, porque a API precisa mudar junto; descreva a tarefa da API em `docs/tarefas/` da `cardvoz-api`.
 - **Problemas** viram issue no GitHub do repositório certo. O commit que corrige cita a issue (`Closes #10`).
-- **Pedido em andamento (out/2026):** a migration do idioma das fichas (`20261030000000_idioma_das_fichas.sql`) ainda precisa ser aplicada no Supabase depois do merge; a API ainda não lê as colunas (tarefa em `cardvoz-api/docs/tarefas/idioma-das-fichas.md`).
+- **Migrations aplicadas no Supabase (12/11/2026):** até `20261112000100_redefinir_senha.sql`, inclusive idioma das fichas, acertos e erros (`20261111000000`), revisão espaçada (`20261112000000`) e códigos de "Esqueci minha senha" (`20261112000100`). A API lê todas as colunas (tarefas em `cardvoz-api/docs/tarefas/`).
+- **Aplicar:** `npx supabase db push --remote`. Sem `--remote`, o CLI (v3) tenta um banco local e falha com "connection refused".
+- **Publicação:** a API é publicada a partir de `gvtenberg/cardvoz-api` (`main`). Aplique a migration antes do merge da API que usa as colunas novas.
