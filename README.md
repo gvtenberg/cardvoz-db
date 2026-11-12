@@ -20,7 +20,8 @@ supabase/
 │   ├── 20261111000000_estatisticas_das_fichas.sql  # Acertos e erros de cada ficha (não apaga dados)
 │   ├── 20261112000000_revisao_espacada.sql      # Revisão espaçada: nível e próxima revisão (não apaga dados)
 │   ├── 20261112000100_redefinir_senha.sql       # Códigos de "Esqueci minha senha" (tabela nova)
-│   └── 20261113000000_confirmar_email.sql       # Confirmação de e-mail (coluna e tabela novas)
+│   ├── 20261113000000_confirmar_email.sql       # Confirmação de e-mail (coluna e tabela novas)
+│   └── 20261113000100_privilegios_padrao.sql    # Tabela nova já nasce fechada para a Data API (reforço)
 └── seed.sql                                     # Vazio: os baralhos são privados de cada usuário
 ```
 
@@ -102,4 +103,5 @@ ConnectionStrings__DefaultConnection="Host=localhost" dotnet ef dbcontext script
 
 - Leia o [`AGENTS.md`](AGENTS.md) antes de criar uma migration: regras (não apagar dados, tabela nova com RLS, nomes iguais aos do Entity Framework) e combinados da equipe. O `CLAUDE.md` só aponta para ele.
 - **Ordem de publicação** de uma mudança que mexe em tabela: migration aqui (`npx supabase db push`) → API → site.
-- **Pendente:** aplicar `20261030000000_idioma_das_fichas.sql` no Supabase depois do merge. A API ainda não lê as colunas novas (tarefa em `cardvoz-api/docs/tarefas/idioma-das-fichas.md`).
+- **Pendente:** aplicar `20261113000100_privilegios_padrao.sql` (reforço: tabela nova já nasce fechada para a Data API do Supabase) e, se ainda não foi, `20261113000000_confirmar_email.sql`. `npx supabase migration list --linked` mostra o que já está no Supabase.
+- **Conferir o RLS no Supabase** (SQL Editor): `SELECT relname, relrowsecurity FROM pg_class WHERE relnamespace = 'public'::regnamespace AND relkind = 'r';` Todas as linhas devem ter `true`. Uma tabela criada à mão pelo painel fica fora das migrations.
