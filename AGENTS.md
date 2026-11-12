@@ -11,7 +11,8 @@ O CardVoz é um app de **fichas de estudo (flashcards) para pessoas cegas e com 
 1. **Toda mudança de esquema é uma migration nova** em `supabase/migrations/` (`npx supabase migration new nome_em_portugues`). Nunca edite uma migration já aplicada no Supabase: o CLI não a roda de novo.
 2. **Não apague dados.** Migration nova adiciona ou ajusta sem perder o que existe (coluna nova nula ou com padrão; nada de `DROP TABLE` em tabela com dados). Diga no cabeçalho: "Não apaga dados".
 3. **O esquema bate com o modelo do Entity Framework da `cardvoz-api`.** Nomes em PascalCase e entre aspas (`"Decks"`, `"QuestionLanguage"`), os mesmos tipos e tamanhos. Para ver o SQL que o modelo espera: README, seção "Criar uma nova migration".
-4. **Tabela nova nasce fechada:** `ENABLE ROW LEVEL SECURITY` sem política e permissões revogadas de `anon` e `authenticated`, como as outras. Só a API (usuário `postgres`) acessa os dados.
+4. **Tabela nova nasce fechada:** `ENABLE ROW LEVEL SECURITY` sem política e permissões revogadas de `anon` e `authenticated`, como as outras. Só a API (usuário `postgres`) acessa os dados. Desde `20261113000100_privilegios_padrao.sql`, o padrão do schema `public` já não dá acesso a esses papéis, mas escreva o `REVOKE` e o RLS mesmo assim.
+9. **Data de migration nova depois da última** do repositório (hoje `20261113000100`). Uma data anterior a uma já aplicada faz o `db push` recusar a migration.
 5. **IDs UUID v4**, nunca sequenciais.
 6. **Valor que vai para a tela tem checagem** (`CHECK`). Ex.: o idioma das fichas vira atributo HTML, então só aceita código de idioma.
 7. **Sem dados de exemplo e sem dados reais no repositório.** O `seed.sql` fica vazio: os baralhos são privados de cada pessoa.
@@ -29,7 +30,7 @@ O CardVoz é um app de **fichas de estudo (flashcards) para pessoas cegas e com 
 | `cardvoz-admin` | Painel da equipe: usuários e baralhos compartilhados |
 
 - **Ordem de publicação** de mudança que mexe em tabela: migration aqui (`npx supabase db push`) → API → site. A API avisa no log se faltar migration.
-- Tabelas: `"Users"`, `"RefreshTokens"`, `"Decks"`, `"Cards"`, `"StudySessions"`, `"StudyReviews"`. Baralho com `"UserId"` nulo é um baralho compartilhado (criado pelo painel); `"SourceDeckId"` diz de qual compartilhado uma cópia veio.
+- Tabelas: `"Users"`, `"RefreshTokens"`, `"PasswordResetTokens"`, `"EmailConfirmationTokens"`, `"Decks"`, `"Cards"`, `"StudySessions"`, `"StudyReviews"`. Baralho com `"UserId"` nulo é um baralho compartilhado (criado pelo painel); `"SourceDeckId"` diz de qual compartilhado uma cópia veio.
 
 ---
 
@@ -55,6 +56,7 @@ Estas regras vieram de conversas da equipe com assistentes de IA e valem para to
   - **Mudança que depende de outra:** um PR por repositório, na ordem **banco → API → site → painel**, e cada PR diz do que depende.
   - **Ao terminar** (resposta de um agente de IA, mensagem no grupo ou descrição do PR), informe sempre, no mesmo formato: (1) o que foi enviado, com repositório e branch; (2) os links dos PRs, numerados na ordem de merge; (3) o que cada merge publica; (4) o que precisa ser configurado ou feito à mão (migration, variáveis de ambiente, Google Cloud, Render). Sem a ferramenta `gh`, o link do PR é `https://github.com/<dono>/<repo>/compare/main...<branch>?expand=1` (dá para preencher `&title=` e `&body=`). A pessoa não deve precisar perguntar o que foi feito.
 - **Problemas** viram issue no GitHub do repositório certo. O commit que corrige cita a issue (`Closes #10`).
+- **A aplicar (nov/2026):** `20261113000000_confirmar_email.sql` (se ainda não foi, antes da API 0.11) e `20261113000100_privilegios_padrao.sql` (reforço, sem pressa: não muda tabela nem dado). Confira com `npx supabase migration list --linked`.
 - **Migrations aplicadas no Supabase (12/11/2026):** até `20261112000100_redefinir_senha.sql`, inclusive idioma das fichas, acertos e erros (`20261111000000`), revisão espaçada (`20261112000000`) e códigos de "Esqueci minha senha" (`20261112000100`). A API lê todas as colunas (tarefas em `cardvoz-api/docs/tarefas/`).
 - **Aplicar:** `npx supabase db push --remote`. Sem `--remote`, o CLI (v3) tenta um banco local e falha com "connection refused".
 - **Publicação:** a API é publicada a partir de `gvtenberg/cardvoz-api` (`main`). Aplique a migration antes do merge da API que usa as colunas novas.
