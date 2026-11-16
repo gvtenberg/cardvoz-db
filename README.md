@@ -21,7 +21,8 @@ supabase/
 │   ├── 20261112000000_revisao_espacada.sql      # Revisão espaçada: nível e próxima revisão (não apaga dados)
 │   ├── 20261112000100_redefinir_senha.sql       # Códigos de "Esqueci minha senha" (tabela nova)
 │   ├── 20261113000000_confirmar_email.sql       # Confirmação de e-mail (coluna e tabela novas)
-│   └── 20261113000100_privilegios_padrao.sql    # Tabela nova já nasce fechada para a Data API (reforço)
+│   ├── 20261113000100_privilegios_padrao.sql    # Tabela nova já nasce fechada para a Data API (reforço)
+│   └── 20261116000000_revisao_tipo_anki.sql     # Revisão espaçada no estilo do Anki: facilidade de cada ficha (não apaga dados)
 └── seed.sql                                     # Vazio: os baralhos são privados de cada usuário
 ```
 
@@ -34,7 +35,7 @@ supabase/
 | `"PasswordResetTokens"` | Códigos de "Esqueci minha senha": só o hash, uso único, válidos por 1 hora |
 | `"EmailConfirmationTokens"` | Códigos do link de confirmação de e-mail: só o hash, uso único, válidos por 24 horas. `"Users"."EmailConfirmedAt"` guarda quando o e-mail foi confirmado |
 | `"Decks"` | Baralhos de cada usuário (título, categoria, descrição, slug único por usuário). Sem dono (`"UserId"` nulo) = baralho compartilhado, criado pelo painel; `"SourceDeckId"` aponta de qual compartilhado uma cópia veio; `"QuestionLanguage"`/`"AnswerLanguage"` guardam o idioma das fichas (nulo = português); `"LastStudiedAt"` = quando o último estudo chegou à conta |
-| `"Cards"` | Fichas de cada baralho (pergunta, resposta, ordem). `"CorrectCount"`/`"IncorrectCount"` somam os acertos e erros; `"LastAnsweredAt"`/`"LastWasCorrect"` guardam a resposta mais recente, que decide o "Estudar só as que errei" do site. `"ReviewLevel"` (0 a 6) e `"NextReviewAt"` são a revisão espaçada: quando a ficha volta para "Revisar agora" |
+| `"Cards"` | Fichas de cada baralho (pergunta, resposta, ordem). `"CorrectCount"`/`"IncorrectCount"` somam os acertos e erros; `"LastAnsweredAt"`/`"LastWasCorrect"` guardam a resposta mais recente, que decide o "Estudar só as que errei" do site. A revisão espaçada segue o Anki: `"NextReviewAt"` (quando a ficha volta para "Revisar agora") e `"ReviewEase"` (facilidade em milésimos, 1300 a 2500); o intervalo são os dias entre `"LastAnsweredAt"` e `"NextReviewAt"`. `"ReviewLevel"` é da caixa de Leitner antiga e a API nova não usa |
 | `"StudySessions"` | Sessões de estudo (acertos, erros, início e fim) |
 | `"StudyReviews"` | Cada resposta dada numa sessão |
 
